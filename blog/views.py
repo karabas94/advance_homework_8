@@ -1,10 +1,14 @@
 from django.urls import reverse_lazy
 from django.views import generic
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login, logout, get_user_model
 from .forms import RegisterForm
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.messages.views import SuccessMessageMixin
+from django.contrib.auth.mixins import LoginRequiredMixin
+
+User = get_user_model()
 
 
 def index(request):
@@ -46,3 +50,24 @@ def logout_request(request):
     logout(request)
     messages.info(request, "You have successfully logged out.")
     return redirect("blog:index")
+
+
+class UpdateProfile(LoginRequiredMixin, SuccessMessageMixin, generic.UpdateView):
+    model = User
+    fields = ['first_name', 'last_name', 'email']
+    template_name = 'registration/update_profile.html'
+    success_url = reverse_lazy('blog:index')
+    success_message = 'Profile updated'
+
+    def get_object(self, queryset=None):
+        user = self.request.user
+        return user
+
+
+class UserProfile(LoginRequiredMixin, generic.DetailView):
+    model = User
+    template_name = 'registration/profile.html'
+
+    def get_object(self, queryset=None):
+        user = self.request.user
+        return user
