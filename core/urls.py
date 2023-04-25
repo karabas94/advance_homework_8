@@ -26,4 +26,6 @@ urlpatterns = [
     path('accounts/update_profile/', UpdateProfile.as_view(), name='update_profile'),
     path('accounts/', UserProfile.as_view(), name='profile'),
     path('logout', logout_request, name="logout"),
+
+    path('__debug__/', include('debug_toolbar.urls')),
 ]
