@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    My drafts
+{% endblock %}
+
+{% block content %}
+
+    <ul>
+        {% for post in drafts %}
+            {% if post.is_draft %}
+                <li>
+                    <h2><a href="{% url 'blog:post_detail' post.pk %}">{{ post.title }}</a></h2>
+                    <p>{{ post.short_description }}</p>
+                </li>
+            {% endif %}
+        {% empty %}
+            <li>No posts yet</li>
+        {% endfor %}
+    </ul>
+
+{% endblock %}

@@ -16,15 +16,20 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
-from blog.views import RegisterFormView, login_request, logout_request, UpdateProfile, UserProfile
+from django.views.generic import RedirectView
+from blog.views import RegisterFormView, login_request, logout_request, UpdateProfile, UserProfile, PublicProfile
 
 urlpatterns = [
+    path('', RedirectView.as_view(url='/blog/post/', permanent=True)),
     path('admin/', admin.site.urls),
     path('blog/', include('blog.urls')),
     path('accounts/register/', RegisterFormView.as_view(), name='register'),
     path('accounts/login/', login_request, name='login'),
     path('accounts/update_profile/', UpdateProfile.as_view(), name='update_profile'),
+
     path('accounts/', UserProfile.as_view(), name='profile'),
+    path('accounts/<int:pk>/', PublicProfile.as_view(), name='user_profile'),
+
     path('logout', logout_request, name="logout"),
 
     path('__debug__/', include('debug_toolbar.urls')),
