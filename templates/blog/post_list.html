@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}Posts{% endblock %}
+
+{% block content %}
+
+    <ul>
+        {% for post in object_list%}
+            {% if post.is_published %}
+                <li>
+                    <h2><a href="{% url 'blog:post_detail' post.pk %}">{{ post.title }}</a></h2>
+                    <p>{{ post.short_description }}</p>
+                    <p><a href="{% url 'user_profile' post.author.pk %}">{{ post.author }}</a></p>
+                </li>
+            {% endif %}
+        {% empty %}
+                <li>No posts yet</li>
+        {% endfor %}
+    </ul>
+
+{% endblock %}

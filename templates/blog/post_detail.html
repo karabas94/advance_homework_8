@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ object.title }}{% endblock %}
+
+{% block content %}
+
+    <ul>
+        <li>
+            <h2>{{ object.title }}</h2>
+            <p>{{ object.text }}</p>
+            <p>{{ object.image }}</p>
+            <p><a href="{% url 'user_profile' post.author.pk %}">{{ object.author }}</a></p>
+            <p>{{ object.created_at }}</p>
+
+            {% if object.author == request.user %}
+                <p><a href="{% url 'blog:post_update' object.pk %}">Edit</a></p>
+                <p><a href="{% url 'blog:post_delete' object.pk %}">Delete</a></p>
+            {% endif %}
+
+        </li>
+    </ul>
+
+{% endblock %}
