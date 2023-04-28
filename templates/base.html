@@ -8,23 +8,33 @@
   <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
 <body>
-    <header>
-        <div class="wrapper">
+    <div class="wrapper">
+        <header class="header">
             <nav class="nav">
                 <ul class="nav-list">
                 {% if user.is_authenticated %}
-                    <li>Welcome, {{ user.get_username }}</li>
-                    <li class="nav-item"><a href="{% url 'blog:post_form' %}">Create post</a></li>
-                    <li class="nav-item"><a href="{% url 'profile' %}">My profile</a></li>
-                    <li class="nav-item"><a href="{% url 'logout' %}?next={{ request.path }}">Logout</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link">Welcome, {{ user.get_username }}</a></li>
+                    <li class="nav-item"><a href="{% url 'blog:post_form' %}" class="nav-link">Create post</a></li>
+                    <li class="nav-item drop">
+                        <a href="{% url 'profile' %}" class="nav-link">My profile</a>
+                        <ul class="drop-list">
+                            <li class="drop-item drop">
+                                <a href="{% url 'blog:user_my_post_list' %}" class="drop-link">My post</a>
+                            </li>
+                            <li class="drop-item drop">
+                                <a href="{% url 'blog:user_draft_post_list' %}" class="drop-link">My draft</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="nav-item"><a href="{% url 'logout' %}?next={{ request.path }}" class="nav-link">Logout</a></li>
                 {% else %}
-                    <li class="nav-item"><a href="{% url 'login' %}?next={{ request.path }}">Login</a></li>
-                    <li class="nav-item"><a href="{% url 'register' %}?next={{ request.path }}">Register</a></li>
+                    <li class="nav-item"><a href="{% url 'login' %}?next={{ request.path }}" class="nav-link">Login</a></li>
+                    <li class="nav-item"><a href="{% url 'register' %}?next={{ request.path }}" class="nav-link">Register</a></li>
                 {% endif %}
                 </ul>
             </nav>
-        </div>
-    </header>
+        </header>
+    </div>
     <main>
         {% block content %}
 

@@ -1,7 +1,7 @@
 from django.urls import reverse_lazy
 from django.views import generic
 from django.contrib.auth import authenticate, login, logout, get_user_model
-from .forms import RegisterForm
+from .forms import RegisterForm, CommentForm
 from .models import Post
 from django.shortcuts import render, redirect
 from django.contrib import messages
@@ -86,7 +86,7 @@ class PublicProfile(generic.DetailView):
 
 class PostCreateView(LoginRequiredMixin, generic.CreateView):
     model = Post
-    fields = ['title', 'short_description', 'text', 'image', 'is_draft', 'is_published']
+    fields = ['title', 'short_description', 'text', 'image', 'is_draft',]
     success_url = reverse_lazy('blog:index')
 
     def form_valid(self, form):
@@ -96,7 +96,7 @@ class PostCreateView(LoginRequiredMixin, generic.CreateView):
 
 class PostUpdateView(LoginRequiredMixin, generic.UpdateView):
     model = Post
-    fields = ['title', 'short_description', 'text', 'image', 'is_draft', 'is_published']
+    fields = ['title', 'short_description', 'text', 'image', 'is_draft']
     success_url = reverse_lazy('blog:index')
 
     def get_queryset(self):
@@ -129,6 +129,26 @@ class PostListView(generic.ListView):
 class PostDetailView(generic.DetailView):
     model = Post
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['comments'] = self.object.comments.filter(is_reviewed=True)
+        return context
+
+
+def add_comment(request, pk):
+    post = Post.objects.get(pk=pk)
+    comments = post.comments.all()
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.post = post
+            comment.save()
+            return redirect('blog:post_detail', pk=post.pk)
+    else:
+        form = CommentForm()
+    return render(request, 'blog/post_detail.html', {'post': post, 'comments': comments, 'form': form})
+
 
 @login_required
 def my_draft(request):
@@ -138,5 +158,5 @@ def my_draft(request):
 
 @login_required
 def my_post(request):
-    posts = Post.objects.filter(author=request.user, is_published=True)
+    posts = Post.objects.filter(author=request.user, is_draft=False)
     return render(request, 'blog/user_my_post_list.html', {'posts': posts})
