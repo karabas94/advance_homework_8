@@ -6,7 +6,7 @@
 
     <ul>
         {% for post in object_list%}
-            {% if post.is_published %}
+            {% if not post.is_draft %}
                 <li>
                     <h2><a href="{% url 'blog:post_detail' post.pk %}">{{ post.title }}</a></h2>
                     <p>{{ post.short_description }}</p>

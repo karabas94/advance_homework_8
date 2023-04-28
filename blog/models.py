@@ -10,12 +10,17 @@ class Post(models.Model):
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     is_draft = models.BooleanField(default=True)
-    is_published = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.title
 
 
 class Comment(models.Model):
     name = models.CharField(max_length=255)
     message = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
-    is_published = models.BooleanField(default=False)
     is_reviewed = models.BooleanField(default=False)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
+
+    def __str__(self):
+        return self.name

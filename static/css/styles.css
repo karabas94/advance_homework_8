@@ -15,8 +15,8 @@ html {
 .wrapper {
     position: relative;
     width: 100%;
-    overflow: hidden;
-    min-height: 100vh;
+    /*overflow: hidden;*/
+    /*min-height: 24vh;*/
     display: flex;
     flex-direction: column;
 }
