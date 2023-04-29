@@ -1,7 +1,7 @@
 from django.urls import reverse_lazy
 from django.views import generic
 from django.contrib.auth import authenticate, login, logout, get_user_model
-from .forms import RegisterForm, CommentForm
+from .forms import RegisterForm, CommentForm, ContactFrom
 from .models import Post
 from django.shortcuts import render, redirect
 from django.contrib import messages
@@ -9,6 +9,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
+from .tasks import send_mail as contact_send_mail
 
 User = get_user_model()
 
@@ -86,7 +87,7 @@ class PublicProfile(generic.DetailView):
 
 class PostCreateView(LoginRequiredMixin, generic.CreateView):
     model = Post
-    fields = ['title', 'short_description', 'text', 'image', 'is_draft',]
+    fields = ['title', 'short_description', 'text', 'image', 'is_draft', ]
     success_url = reverse_lazy('blog:index')
 
     def form_valid(self, form):
@@ -160,3 +161,18 @@ def my_draft(request):
 def my_post(request):
     posts = Post.objects.filter(author=request.user, is_draft=False)
     return render(request, 'blog/user_my_post_list.html', {'posts': posts})
+
+
+def contact_form(request):
+    if request.method == "POST":
+        form = ContactFrom(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            subject = form.cleaned_data['subject']
+            message = form.cleaned_data['message']
+            contact_send_mail.delay(subject, message, email)
+            messages.add_message(request, messages.SUCCESS, 'Message sent')
+            return redirect('blog:contact')
+    else:
+        form = ContactFrom()
+    return render(request, "blog/contact.html", {"form": form})

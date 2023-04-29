@@ -1,11 +1,14 @@
 from django.urls import path
-from .views import PostCreateView, PostUpdateView, PostDeleteView, PostListView, PostDetailView, my_draft, my_post, add_comment
+from .views import PostCreateView, PostUpdateView, PostDeleteView, PostListView, PostDetailView, my_draft, my_post, \
+    add_comment
 
 from . import views
 
 app_name = 'blog'
 urlpatterns = [
     path('', views.index, name='index'),
+
+    path('contact', views.contact_form, name="contact"),
 
     path('post/create/', PostCreateView.as_view(), name='post_form'),
     path('post/<int:pk>/update/', PostUpdateView.as_view(), name='post_update'),
