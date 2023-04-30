@@ -1,5 +1,7 @@
 from django.db import models
 from django.conf import settings
+from django.dispatch import receiver
+from django.core.mail import send_mail
 
 
 class Post(models.Model):
@@ -24,3 +26,25 @@ class Comment(models.Model):
 
     def __str__(self):
         return self.name
+
+
+@receiver(models.signals.post_save, sender=Comment)
+def send_notification_comment_mail(sender, instance, **kwargs):
+    send_mail(
+        'New Comment',
+        f"A new comment has been added to '{instance.post.title}' by '{instance.name}':\n\n{instance.message}",
+        'noreply@admin.com',
+        ['admin@admin.com'],
+        fail_silently=False,
+    )
+
+
+@receiver(models.signals.post_save, sender=Post)
+def send_notification_post_mail(sender, instance, **kwargs):
+    send_mail(
+        'New Post',
+        f"A new post has been added '{instance.title}' by '{instance.author}'",
+        'noreply@admin.com',
+        ['admin@admin.com'],
+        fail_silently=False,
+    )

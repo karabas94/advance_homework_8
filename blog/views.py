@@ -85,6 +85,7 @@ class PublicProfile(generic.DetailView):
         return user
 
 
+# signal(send mail to admin)
 class PostCreateView(LoginRequiredMixin, generic.CreateView):
     model = Post
     fields = ['title', 'short_description', 'text', 'image', 'is_draft', ]
@@ -136,6 +137,7 @@ class PostDetailView(generic.DetailView):
         return context
 
 
+# signal(send mail to admin)
 def add_comment(request, pk):
     post = Post.objects.get(pk=pk)
     comments = post.comments.all()
