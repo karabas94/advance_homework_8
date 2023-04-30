@@ -15,7 +15,9 @@ class PostModelAdmin(admin.ModelAdmin):
 
 @admin.action(description='Mark selected comments as published')
 def check_comment(modeladmin, request, queryset):
-    queryset.update(is_reviewed=True)
+    for obj in queryset:
+        obj.is_reviewed = True
+        obj.save()
 
 
 @admin.register(Comment)
