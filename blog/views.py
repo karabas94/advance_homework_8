@@ -11,6 +11,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from .tasks import send_mail as contact_send_mail
 from django.db.models import Count, Q
+from django.core.paginator import Paginator
 
 User = get_user_model()
 
@@ -22,7 +23,7 @@ def index(request):
 class RegisterFormView(generic.FormView):
     template_name = 'registration/register.html'
     form_class = RegisterForm
-    success_url = reverse_lazy("blog:index")
+    success_url = reverse_lazy("blog:post_list")
 
     def form_valid(self, form):
         user = form.save()
@@ -41,7 +42,7 @@ def login_request(request):
             if user is not None:
                 login(request, user)
                 messages.info(request, f"You are now logged in as {username}.")
-                return redirect("blog:index")
+                return redirect("blog:post_list")
             else:
                 messages.error(request, "Invalid username or password.")
         else:
@@ -53,14 +54,14 @@ def login_request(request):
 def logout_request(request):
     logout(request)
     messages.info(request, "You have successfully logged out.")
-    return redirect("blog:index")
+    return redirect("blog:post_list")
 
 
 class UpdateProfile(LoginRequiredMixin, SuccessMessageMixin, generic.UpdateView):
     model = User
     fields = ['first_name', 'last_name', 'email']
     template_name = 'registration/update_profile.html'
-    success_url = reverse_lazy('blog:index')
+    success_url = reverse_lazy('blog:post_list')
     success_message = 'Profile updated'
 
     def get_object(self, queryset=None):
@@ -90,7 +91,7 @@ class PublicProfile(generic.DetailView):
 class PostCreateView(LoginRequiredMixin, generic.CreateView):
     model = Post
     fields = ['title', 'short_description', 'text', 'image', 'is_draft', ]
-    success_url = reverse_lazy('blog:index')
+    success_url = reverse_lazy('blog:post_list')
 
     def form_valid(self, form):
         form.instance.author = self.request.user
@@ -100,7 +101,7 @@ class PostCreateView(LoginRequiredMixin, generic.CreateView):
 class PostUpdateView(LoginRequiredMixin, generic.UpdateView):
     model = Post
     fields = ['title', 'short_description', 'text', 'image', 'is_draft']
-    success_url = reverse_lazy('blog:index')
+    success_url = reverse_lazy('blog:post_list')
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -110,7 +111,7 @@ class PostUpdateView(LoginRequiredMixin, generic.UpdateView):
 
 class PostDeleteView(LoginRequiredMixin, generic.DeleteView):
     model = Post
-    success_url = reverse_lazy('blog:index')
+    success_url = reverse_lazy('blog:post_list')
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -120,6 +121,7 @@ class PostDeleteView(LoginRequiredMixin, generic.DeleteView):
 
 class PostListView(generic.ListView):
     model = Post
+    paginate_by = 50
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -135,6 +137,7 @@ class PostListView(generic.ListView):
 class PostDetailView(generic.DetailView):
     model = Post
     queryset = Post.objects.select_related('author').all()
+    paginate_by = 3
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -143,7 +146,11 @@ class PostDetailView(generic.DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['comments'] = self.object.comments.filter(is_reviewed=True)
+        comments = self.object.comments.filter(is_reviewed=True)
+        paginator = Paginator(comments, self.paginate_by)
+        page_number = self.request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+        context['comments'] = page_obj
         return context
 
 

@@ -11,7 +11,7 @@
             {% if object.image and object.image.url %}
                 <img src="{{ object.image.url }}">
             {% endif %}
-            <p><a href="{% url 'user_profile' post.author.pk %}">{{ object.author }}</a> {{ object.num_posts }} posts</p>
+            <p>{{ object.num_posts }} posts by <a href="{% url 'user_profile' post.author.pk %}">{{ object.author }}</a></p>
             <p>{{ object.created_at }}</p>
 
             {% if object.author == request.user %}
@@ -36,6 +36,21 @@
     {% else %}
         <p>No comments yet.</p>
     {% endif %}
+    {% block pagination %}
+        {% if comments.has_other_pages %}
+            <div class="pagination">
+                <span class="page-links">
+                    {% if comments.has_previous %}
+                        <a href="?page={{ comments.previous_page_number }}">previous</a>
+                    {% endif %}
+                        <span class="page-current">Page {{ comments.number }} of {{ comments.paginator.num_pages }}.</span>
+                    {% if comments.has_next %}
+                        <a href="?page={{ comments.next_page_number }}">next</a>
+                    {% endif %}
+                </span>
+            </div>
+        {% endif %}
+    {% endblock %}
 
 
     <h3>Add a Comment</h3>
@@ -44,7 +59,7 @@
         {% if user.is_authenticated %}
             <input type="hidden" name="name" id="name" value="{{ user.username }}" readonly>
         {% else %}
-            <label for="name" >Name:</label>
+            <label for="name">Name:</label>
             <input type="text" name="name" id="name" required>
         {% endif %}
         <br>
