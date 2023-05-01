@@ -10,6 +10,7 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from .tasks import send_mail as contact_send_mail
+from django.db.models import Count, Q
 
 User = get_user_model()
 
@@ -71,10 +72,6 @@ class UserProfile(LoginRequiredMixin, generic.DetailView):
     model = User
     template_name = 'registration/profile.html'
 
-    def get_object(self, queryset=None):
-        user = self.request.user
-        return user
-
 
 class PublicProfile(generic.DetailView):
     model = User
@@ -84,8 +81,9 @@ class PublicProfile(generic.DetailView):
         user = User.objects.get(pk=self.kwargs['pk'])
         return user
 
+    # signal(send mail to admin)
 
-# signal(send mail to admin)
+
 class PostCreateView(LoginRequiredMixin, generic.CreateView):
     model = Post
     fields = ['title', 'short_description', 'text', 'image', 'is_draft', ]
@@ -122,6 +120,9 @@ class PostListView(generic.ListView):
 
     def get_queryset(self):
         queryset = super().get_queryset()
+        queryset = queryset.select_related('author').annotate(
+            comment_count=Count('comments', filter=Q(comments__is_reviewed=True))).all()
+        queryset = queryset.order_by('created_at')
         username = self.kwargs.get('user')
         if username:
             queryset = queryset.filter(author__username=username)
@@ -130,6 +131,12 @@ class PostListView(generic.ListView):
 
 class PostDetailView(generic.DetailView):
     model = Post
+    queryset = Post.objects.select_related('author').all()
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        queryset = queryset.annotate(num_posts=Count('author__post'))
+        return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
