@@ -26,8 +26,8 @@
         <header class="header">
             <nav class="nav">
                 <ul class="nav-list">
-                {% if user.is_authenticated %}
-                    <li class="nav-item"><a href="#" class="nav-link">Welcome, {{ user.get_username }}</a></li>
+                {% if request.user.is_authenticated %}
+                    <li class="nav-item"><a href="#" class="nav-link">Welcome, {{ request.user.get_username }}</a></li>
                     <li class="nav-item"><a href="{% url 'blog:post_form' %}" class="nav-link">Create post</a></li>
                     <li class="nav-item drop">
                         <a href="{% url 'profile' %}" class="nav-link">My profile</a>

@@ -72,6 +72,9 @@ class UserProfile(LoginRequiredMixin, generic.DetailView):
     model = User
     template_name = 'registration/profile.html'
 
+    def get_object(self, queryset=None):
+        return self.request.user
+
 
 class PublicProfile(generic.DetailView):
     model = User
