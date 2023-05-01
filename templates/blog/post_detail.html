@@ -11,7 +11,7 @@
             {% if object.image and object.image.url %}
                 <img src="{{ object.image.url }}">
             {% endif %}
-            <p><a href="{% url 'user_profile' post.author.pk %}">{{ object.author }}</a></p>
+            <p><a href="{% url 'user_profile' post.author.pk %}">{{ object.author }}</a> {{ object.num_posts }} posts</p>
             <p>{{ object.created_at }}</p>
 
             {% if object.author == request.user %}
