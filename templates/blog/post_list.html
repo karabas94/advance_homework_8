@@ -4,19 +4,31 @@
 
 {% block content %}
 
-    <ul>
-        {% for post in object_list%}
-            {% if not post.is_draft %}
-                <li>
-                    <h2><a href="{% url 'blog:post_detail' post.pk %}">{{ post.title }}</a></h2>
-                    <p>{{ post.short_description }}</p>
-                    <p><a href="{% url 'user_profile' post.author.pk %}">{{ post.author }}</a></p>
-                    <p>{{ post.comment_count }} comments</p>
-                </li>
-            {% endif %}
-        {% empty %}
-                <li>No posts yet</li>
-        {% endfor %}
-    </ul>
+    <div class="album py-5">
+        <div class="container">
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+                {% for post in object_list %}
+                    {% if not post.is_draft %}
+                        <div class="col">
+                            <div class="card shadow-sm">
+                                <div class="card-body">
+                                    <h3 class="mb-0"><a href="{% url 'blog:post_detail' post.pk %}">{{ post.title }}</a></h3>
+                                    <p class="card-text">{{ post.short_description }}</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="btn-group">
+                                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick='location.href="{% url 'user_profile' post.author.pk %}"'>{{ post.author }}</button>
+                                        </div>
+                                        <small class="text-body-secondary">{{ post.comment_count }} comments</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% empty %}
+                    <h3 class="mb-0">No posts yet</h3>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
 
 {% endblock %}

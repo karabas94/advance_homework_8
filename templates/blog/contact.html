@@ -1,14 +1,25 @@
-{% extends "base.html" %}
-
-{% block title %}
-    Contact us
-{% endblock %}
-
-{% block content %}
-    <h1>Contact Us</h1>
-    <form method="post" action="{% url 'blog:contact' %}">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Send</button>
-    </form>
-{% endblock %}
+<form method="post" action="{% url 'blog:contact' %}" class="js-contact-form needs-validation" novalidate>
+    {% csrf_token %}
+    <div class="modal-header">
+        <h5 class="modal-title">Contact us</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body">
+        <div class="mb-3">
+            <label for="id_email" class="col-form-label">Email:</label>
+            <input type="email" class="form-control" name="email" id="id_email" required>
+        </div>
+        <div class="mb-3">
+            <label for="id_subject" class="col-form-label">Subject:</label>
+            <input type="text" class="form-control" name="subject" id="id_subject" required>
+        </div>
+        <div class="mb-3">
+            <label for="id_message" class="col-form-label">Message:</label>
+            <textarea class="form-control" name="message" id="id_message" required></textarea>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary">Send message</button>
+    </div>
+</form>

@@ -12,6 +12,8 @@ from django.contrib.auth.decorators import login_required
 from .tasks import send_mail as contact_send_mail
 from django.db.models import Count, Q
 from django.core.paginator import Paginator
+from django.http import JsonResponse
+from django.template.loader import render_to_string
 
 User = get_user_model()
 
@@ -121,7 +123,7 @@ class PostDeleteView(LoginRequiredMixin, generic.DeleteView):
 
 class PostListView(generic.ListView):
     model = Post
-    paginate_by = 50
+    paginate_by = 30
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -173,16 +175,25 @@ def add_comment(request, pk):
 @login_required
 def my_draft(request):
     drafts = Post.objects.filter(author=request.user, is_draft=True)
-    return render(request, 'blog/user_draft_post_list.html', {'drafts': drafts})
+    paginator = Paginator(drafts, 9)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'blog/user_draft_post_list.html',
+                  {'page_obj': page_obj, 'is_paginated': page_obj.has_other_pages()})
 
 
 @login_required
 def my_post(request):
-    posts = Post.objects.filter(author=request.user, is_draft=False)
-    return render(request, 'blog/user_my_post_list.html', {'posts': posts})
+    post_list = Post.objects.filter(author=request.user, is_draft=False)
+    paginator = Paginator(post_list, 9)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'blog/user_my_post_list.html',
+                  {'page_obj': page_obj, 'is_paginated': page_obj.has_other_pages()})
 
 
 def contact_form(request):
+    data = dict()
     if request.method == "POST":
         form = ContactFrom(request.POST)
         if form.is_valid():
@@ -191,7 +202,10 @@ def contact_form(request):
             message = form.cleaned_data['message']
             contact_send_mail.delay(subject, message, email)
             messages.add_message(request, messages.SUCCESS, 'Message sent')
-            return redirect('blog:contact')
+            data['form_is_valid'] = True
+        else:
+            data['form_is_valid'] = False
     else:
         form = ContactFrom()
-    return render(request, "blog/contact.html", {"form": form})
+    data['html_form'] = render_to_string('blog/contact.html', {'form': form}, request=request)
+    return JsonResponse(data)
