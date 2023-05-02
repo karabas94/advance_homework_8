@@ -6,8 +6,6 @@
 
     <p>Username: {{ object.username }}</p>
     <p>Email: {{ object.email }}</p>
-    <p><a href="{% url 'blog:user_my_post_list' %}">My posts</a></p>
-    <p><a href="{% url 'blog:user_draft_post_list' %}">My draft</a></p>
     <p><a href="{% url 'update_profile' %}">Update my profile</a></p>
 
 {% endblock %}
