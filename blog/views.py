@@ -185,7 +185,8 @@ def my_draft(request):
 @login_required
 def my_post(request):
     post_list = Post.objects.filter(author=request.user, is_draft=False)
-    paginator = Paginator(post_list, 9)
+    queryset = post_list.annotate(comment_count=Count('comments', filter=Q(comments__is_reviewed=True)))
+    paginator = Paginator(queryset, 9)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     return render(request, 'blog/user_my_post_list.html',

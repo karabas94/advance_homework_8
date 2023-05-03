@@ -16,6 +16,7 @@
                                 <div class="card-body">
                                     <h3 class="mb-0"><a href="{% url 'blog:post_detail' post.pk %}">{{ post.title }}</a></h3>
                                     <p class="card-text">{{ post.short_description }}</p>
+                                    <small class="text-body-secondary">{{ post.comment_count }} comments</small>
                                 </div>
                             </div>
                         </div>
