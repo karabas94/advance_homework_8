@@ -129,7 +129,7 @@ class PostListView(generic.ListView):
         queryset = super().get_queryset()
         queryset = queryset.select_related('author').annotate(
             comment_count=Count('comments', filter=Q(comments__is_reviewed=True))).all()
-        queryset = queryset.order_by('created_at')
+        queryset = queryset.order_by('-created_at')
         username = self.kwargs.get('user')
         if username:
             queryset = queryset.filter(author__username=username)
@@ -202,7 +202,6 @@ def contact_form(request):
             subject = form.cleaned_data['subject']
             message = form.cleaned_data['message']
             contact_send_mail.delay(subject, message, email)
-            messages.add_message(request, messages.SUCCESS, 'Message sent')
             data['form_is_valid'] = True
         else:
             data['form_is_valid'] = False
