@@ -8,14 +8,23 @@
         <div class="mb-3">
             <label for="id_email" class="col-form-label">Email:</label>
             <input type="email" class="form-control" name="email" id="id_email" required>
+            <div class="invalid-feedback">
+                Please provide a email.
+            </div>
         </div>
         <div class="mb-3">
             <label for="id_subject" class="col-form-label">Subject:</label>
             <input type="text" class="form-control" name="subject" id="id_subject" required>
+            <div class="invalid-feedback">
+                Please provide a subject.
+            </div>
         </div>
         <div class="mb-3">
             <label for="id_message" class="col-form-label">Message:</label>
             <textarea class="form-control" name="message" id="id_message" required></textarea>
+            <div class="invalid-feedback">
+                Please provide a message.
+            </div>
         </div>
     </div>
     <div class="modal-footer">

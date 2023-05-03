@@ -4,25 +4,45 @@
 
 {% block content %}
 
-  {% if form.errors %}
-    <p>Your username and password didn't match. Please try again.</p>
-  {% endif %}
-
-  {% if next %}
-    {% if user.is_authenticated %}
-      <p>Your account doesn't have access to this page. To proceed,
-        please login with an account that has access.</p>
-    {% else %}
-      <p>Please login to see this page.</p>
+    {% if form.errors %}
+        <p>Your username and password didn't match. Please try again.</p>
     {% endif %}
-  {% endif %}
 
-    <h1>Login</h1>
-    <form method="POST" action="{% url 'login' %}">
-        {% csrf_token %}
-        {{ login_form.as_p }}
-        <button type="submit">Login</button>
-    </form>
-    <p>Don't have an account? <a href="{% url 'register' %}">Create an account</a></p>
+    {% if next %}
+        {% if user.is_authenticated %}
+            <p>Your account doesn't have access to this page. To proceed,
+                please login with an account that has access.</p>
+        {% else %}
+            <p>Please login to see this page.</p>
+        {% endif %}
+    {% endif %}
+    <div class="container text-center">
+        <main class="form-signin px-5">
+            <form method="POST" action="{% url 'login' %}" class="needs-validation px-5" novalidate>
+                {% csrf_token %}
+                <h1 class="h3 mb-3 fw-normal">Please login</h1>
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="id_username" name="username" placeholder="Username"
+                           required>
+                    <label for="id_username">Username</label>
+                    <div class="invalid-feedback">
+                        Please provide a username.
+                    </div>
+                </div>
+                <div class="form-floating mb-3">
+                    <input type="password" class="form-control" id="id_password" name="password" placeholder="Password"
+                           required>
+                    <label for="id_password">Password</label>
+                    <div class="invalid-feedback">
+                        Please provide a password.
+                    </div>
+                </div>
+                <button class="w-100 mb-3 btn btn-lg btn-primary gap-3" type="submit">Login</button>
+                <div class="checkbox mb-3">
+                    Don't have an account? <a href="{% url 'register' %}">Create an account</a>
+                </div>
+            </form>
+        </main>
+    </div>
 
 {% endblock %}
