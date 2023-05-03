@@ -11,13 +11,11 @@
 </head>
 <body>
 {% if messages %}
-    <div class="row">
+    <div class="row text-center">
         <div class="col-sm-12">
             {% for message in messages %}
                 <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     <strong>{% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}Error{% else %}
                         {{ message.tags|title }}{% endif %}!</strong> {{ message }}
                 </div>
@@ -26,7 +24,8 @@
     </div>
 {% endif %}
 <div class="container">
-    <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom" id="blog-header">
+    <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom"
+            id="blog-header">
         {% if request.user.is_authenticated %}
             <div class="col-md-3 mb-2 mb-md-0">
                 <a href="/" class="d-inline-flex link-body-emphasis text-decoration-none">
@@ -37,7 +36,8 @@
             <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
                 <li><a href="{% url 'blog:post_list' %}" class="nav-link px-2 link-secondary">Home</a></li>
                 <li><a href="{% url 'blog:post_form' %}" class="nav-link px-2">Create post</a></li>
-                <button type="button" class="nav-link px-2 js-contact" data-url="{% url 'blog:contact' %}">Contact us</button>
+                <button type="button" class="nav-link px-2 js-contact" data-url="{% url 'blog:contact' %}">Contact us
+                </button>
                 <li class="dropdown">
                     <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"
                        aria-expanded="false">Profile</a>
@@ -66,7 +66,8 @@
 
             <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
                 <li><a href="{% url 'blog:post_list' %}" class="nav-link px-2 link-secondary">Home</a></li>
-                <button type="button" class="nav-link px-2 js-contact" data-url="{% url 'blog:contact' %}">Contact us</button>
+                <button type="button" class="nav-link px-2 js-contact" data-url="{% url 'blog:contact' %}">Contact us
+                </button>
             </ul>
 
             <div class="col-md-3 text-end">
@@ -93,19 +94,29 @@
                         <a class="page-link"
                            href="{{ request.path }}?page={{ page_obj.previous_page_number }}">Previous</a>
                     </li>
-                    <li class="page-item">
-                        <a class="page-link"
-                           href="{{ request.path }}?page={{ page_obj.previous_page_number }}">{{ page_obj.previous_page_number }}</a>
-                    </li>
                 {% endif %}
-                <li class="page-item active" aria-current="page">
-                    <a class="page-link" href="{{ request.path }}?page={{ page_obj.number }}">{{ page_obj.number }}</a>
+
+                <li class="page-item">
+                    <a class="page-link" href="{{ request.path }}?page=1">First</a>
                 </li>
+
+                {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                        <li class="page-item active">
+                            <a class="page-link">{{ num }} <span class="sr-only"></span></a>
+                        </li>
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ request.path }}?page={{ num }}">{{ num }}</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+
+                <li class="page-item">
+                    <a class="page-link" href="{{ request.path }}?page={{ page_obj.paginator.num_pages }}">Last</a>
+                </li>
+
                 {% if page_obj.has_next %}
-                    <li class="page-item">
-                        <a class="page-link"
-                           href="{{ request.path }}?page={{ page_obj.next_page_number }}">{{ page_obj.next_page_number }}</a>
-                    </li>
                     <li class="page-item">
                         <a class="page-link" href="{{ request.path }}?page={{ page_obj.next_page_number }}">Next</a>
                     </li>
@@ -119,15 +130,23 @@
                         <a class="page-link" href="?page={{ comments.previous_page_number }}">Previous</a>
                     </li>
                 {% endif %}
+                {% if comments.number > 1 %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1">First</a>
+                    </li>
+                {% endif %}
                 <li class="page-item active">
-                    <a class="page-link" href="#">Page {{ comments.number }}
-                        of {{ comments.paginator.num_pages }}.</a>
+                    <a class="page-link" href="#">Page {{ comments.number }} of {{ comments.paginator.num_pages }}.</a>
                 </li>
-                {% if comments.has_next %}
+                {% if comments.number < comments.paginator.num_pages %}
                     <li class="page-item">
                         <a class="page-link" href="?page={{ comments.next_page_number }}">Next</a>
                     </li>
                 {% endif %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ comments.paginator.num_pages }}">Last</a>
+                    </li>
+
             </ul>
         {% endif %}
     {% endblock %}
