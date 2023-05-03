@@ -4,68 +4,81 @@
 
 {% block content %}
 
-    <ul>
-        <li>
-            <h2>{{ object.title }}</h2>
-            <p>{{ object.text }}</p>
+    <div class="container">
+        <div class="card shadow-sm">
             {% if object.image and object.image.url %}
-                <img src="{{ object.image.url }}">
+                <img class="bd-placeholder-img card-img-top" width="100%" height="225" src="{{ object.image.url }}"
+                     role="img" aria-label="Placeholder: Thumbnail">
+                <title>Placeholder</title>
+                <rect width="100%" height="100%" fill="#55595c"></rect>
             {% endif %}
-            <p>{{ object.num_posts }} posts by <a href="{% url 'user_profile' post.author.pk %}">{{ object.author }}</a></p>
-            <p>{{ object.created_at }}</p>
-
-            {% if object.author == request.user %}
-                <p><a href="{% url 'blog:post_update' object.pk %}">Edit</a></p>
-                <p><a href="{% url 'blog:post_delete' object.pk %}">Delete</a></p>
-            {% endif %}
-
-        </li>
-    </ul>
-
-    <h3>Comments</h3>
-    {% if comments %}
-        <ul>
-            {% for comment in comments %}
-                <li>
-                    <p>{{ comment.name }}</p>
-                    <p>{{ comment.message }}</p>
-                    <p>{{ comment.created_at }}</p>
-                </li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>No comments yet.</p>
-    {% endif %}
-    {% block pagination %}
-        {% if comments.has_other_pages %}
-            <div class="pagination">
-                <span class="page-links">
-                    {% if comments.has_previous %}
-                        <a href="?page={{ comments.previous_page_number }}">previous</a>
+            <div class="card-body">
+                <h3 class="mb-0">{{ object.title }}</h3>
+                <p class="card-text">{{ object.text }}</p>
+                <div class="mb-1 text-body-secondary">{{ object.created_at }}</div>
+                <div class="d-flex justify-content-between align-items-center">
+                    {% if object.author == request.user %}
+                        <div class="btn-group">
+                            <button type="button"
+                                    class="btn btn-warning btn-sm js-update-book"
+                                    onclick='location.href="{% url 'blog:post_update' object.pk %}"'>
+                                <span class="glyphicon glyphicon-pencil"></span> Edit
+                            </button>
+                            <button type="button"
+                                    class="btn btn-danger btn-sm js-delete-book"
+                                    onclick='location.href="{% url 'blog:post_delete' object.pk %}"'>
+                                <span class="glyphicon glyphicon-trash"></span> Delete
+                            </button>
+                        </div>
                     {% endif %}
-                        <span class="page-current">Page {{ comments.number }} of {{ comments.paginator.num_pages }}.</span>
-                    {% if comments.has_next %}
-                        <a href="?page={{ comments.next_page_number }}">next</a>
-                    {% endif %}
-                </span>
+                    <small class="text-body-secondary">{{ object.num_posts }} posts by <a
+                            href="{% url 'user_profile' post.author.pk %}">
+                        {{ object.author }}</a></small>
+                </div>
             </div>
-        {% endif %}
-    {% endblock %}
-
-
-    <h3>Add a Comment</h3>
-    <form method="post" action="{% url 'blog:add_comment' object.pk %}">
-        {% csrf_token %}
-        {% if user.is_authenticated %}
-            <input type="hidden" name="name" id="name" value="{{ user.username }}" readonly>
-        {% else %}
-            <label for="name">Name:</label>
-            <input type="text" name="name" id="name" required>
-        {% endif %}
-        <br>
-        <label for="message">Message:</label>
-        <textarea name="message" id="message" required></textarea>
-        <br>
-        <button type="submit">Submit</button>
-    </form>
+        </div>
+        <h3 class="text-center m-2">Add a Comment</h3>
+        <form method="post" action="{% url 'blog:add_comment' object.pk %}" class="needs-validation" novalidate>
+            {% csrf_token %}
+            {% if user.is_authenticated %}
+                <input type="hidden" name="name" id="name" value="{{ user.username }}" readonly>
+            {% else %}
+                <div class="mb-3">
+                    <label class="form-label" for="name">Name:</label>
+                    <input class="form-control" type="text" name="name" id="name" required>
+                    <div class="invalid-feedback">
+                        Please provide a name.
+                    </div>
+                </div>
+            {% endif %}
+            <div class="mb-3">
+                <label class="form-label" for="message">Message:</label>
+                <textarea class="form-control" name="message" id="message" required></textarea>
+                <div class="invalid-feedback">
+                    Please provide a message.
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Save</button>
+        </form>
+        <h3 class="text-center m-2">Comments</h3>
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+            {% if comments %}
+                {% for comment in comments %}
+                    <div class="col">
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-text">{{ comment.name }}</h5>
+                                <p class="card-text">{{ comment.message }}</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-body-secondary">{{ comment.created_at }}</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>No comments yet.</p>
+            {% endif %}
+        </div>
+    </div>
 {% endblock %}

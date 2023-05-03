@@ -3,11 +3,53 @@
 {% block title %}Register{% endblock %}
 
 {% block content %}
-    <h1>Register</h1>
-    <form method="POST">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Register</button>
-    </form>
-    <p>If you already have an account, <a href="{% url 'login' %}">login instead</a></p>
+    <div class="container ">
+        <form method="POST" class="needs-validation px-5" novalidate>
+            {% csrf_token %}
+            <h1 class="h3 mb-3 fw-normal text-center">Register</h1>
+            <div class="form-floating mb-3">
+                <input type="text" class="form-control" id="id_username" name="username" placeholder="Username"
+                       required>
+                <label for="id_username">Username</label>
+                <div class="invalid-feedback">
+                    Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.
+                </div>
+            </div>
+            <div class="form-floating mb-3">
+                <input type="text" class="form-control" id="id_email" name="email" placeholder="Email"
+                       required>
+                <label for="id_email">Email</label>
+                <div class="invalid-feedback">
+                    Required.
+                </div>
+            </div>
+            <div class="form-floating mb-3">
+                <input type="password" class="form-control" id="id_password" name="password1" placeholder="Password"
+                       required>
+                <label for="id_password">Password</label>
+                <div class="invalid-feedback">
+                    <ul>
+                        <li>Your password can’t be too similar to your other personal information.</li>
+                        <li>Your password must contain at least 8 characters.</li>
+                        <li>Your password can’t be a commonly used password.</li>
+                        <li>Your password can’t be entirely numeric.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="form-floating mb-3">
+                <input type="password" class="form-control" id="id_password2" name="password2"
+                       placeholder="Password confirmation"
+                       required>
+                <label for="id_password2">Password confirmation</label>
+                <div class="invalid-feedback">
+                    Enter the same password as before, for verification.
+                </div>
+            </div>
+            <button class="w-100 mb-3 btn btn-lg btn-primary gap-3" type="submit">Register</button>
+            <div class="checkbox mb-3 text-center">
+                If you already have an account, <a href="{% url 'login' %}">login instead</a>
+            </div>
+        </form>
+    </div>
 {% endblock %}
+

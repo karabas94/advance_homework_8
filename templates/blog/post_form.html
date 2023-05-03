@@ -3,10 +3,39 @@
 {% block title %}Create Post{% endblock %}
 
 {% block content %}
-
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Save</button>
-    </form>
+    <div class="container">
+        <form method="post" class="needs-validation" novalidate>
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="id_title" class="form-label">Title: </label>
+                <input name='title' type="text" class="form-control" id="id_title" required value="{{ object.title }}">
+                <div class="invalid-feedback">
+                    Please provide a title.
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="id_short_description" class="form-label">Short Description: </label>
+                <input name='short_description' type="text" class="form-control" id="id_short_description" required value="{{ object.short_description }}">
+                <div class="invalid-feedback">
+                    Please provide a short description.
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="id_text" class="form-label">Text: </label>
+                <textarea name="text" class="form-control" id="id_text" required>{{ object.text }}</textarea>
+                <div class="invalid-feedback">
+                    Please provide a text.
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="id_image" class="form-label">Image: </label>
+                <input type="file" name="image" class="form-control-file" id="id_image">
+            </div>
+            <div class="mb-3 form-check">
+                <input name="is_draft" type="checkbox" class="form-check-input" id="id_is_draft">
+                <label class="form-check-label" for="id_is_draft">Is Draft: </label>
+            </div>
+            <button type="submit" class="btn btn-primary">Save</button>
+        </form>
+    </div>
 {% endblock %}
