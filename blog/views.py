@@ -123,7 +123,7 @@ class PostDeleteView(LoginRequiredMixin, generic.DeleteView):
 
 class PostListView(generic.ListView):
     model = Post
-    paginate_by = 30
+    paginate_by = 29
 
     def get_queryset(self):
         queryset = super().get_queryset()
