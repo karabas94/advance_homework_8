@@ -9,7 +9,6 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
-from .tasks import send_mail as contact_send_mail
 from django.db.models import Count, Q
 from django.core.paginator import Paginator
 from django.http import JsonResponse
