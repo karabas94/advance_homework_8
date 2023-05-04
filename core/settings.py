@@ -26,15 +26,9 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 DEBUG = False
 
 ALLOWED_HOSTS = [
-    "localhost",
-    '127.0.0.1',
+
 ]
 
-
-INTERNAL_IPS = [
-    "localhost",
-    "127.0.0.1",
-]
 
 # Application definition
 
@@ -136,6 +130,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 STATIC_URL = '/static/'
 
