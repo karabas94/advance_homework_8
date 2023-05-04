@@ -9,7 +9,6 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
-from .tasks import send_mail as contact_send_mail
 from django.db.models import Count, Q
 from django.core.paginator import Paginator
 from django.http import JsonResponse
@@ -198,10 +197,10 @@ def contact_form(request):
     if request.method == "POST":
         form = ContactFrom(request.POST)
         if form.is_valid():
-            email = form.cleaned_data['email']
-            subject = form.cleaned_data['subject']
-            message = form.cleaned_data['message']
-            contact_send_mail.delay(subject, message, email)
+            # email = form.cleaned_data['email']
+            # subject = form.cleaned_data['subject']
+            # message = form.cleaned_data['message']
+            # # contact_send_mail.delay(subject, message, email)
             data['form_is_valid'] = True
         else:
             data['form_is_valid'] = False
