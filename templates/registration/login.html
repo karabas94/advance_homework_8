@@ -22,20 +22,26 @@
                 {% csrf_token %}
                 <h1 class="h3 mb-3 fw-normal">Please login</h1>
                 <div class="form-floating mb-3">
-                    <input type="text" class="form-control" id="id_username" name="username" placeholder="Username"
+                    <input type="text" class="form-control" id="{{ login_form.username.id_for_label }}"
+                           name="{{ login_form.username.name }}" placeholder="Username"
                            required>
-                    <label for="id_username">Username</label>
-                    <div class="invalid-feedback">
-                        Please provide a username.
-                    </div>
+                    <label for="{{ login_form.username.id_for_label }}">Username</label>
+                    {% for error in field.errors %}
+                        <div class="invalid-feedback">
+                            {{ error }}
+                        </div>
+                    {% endfor %}
                 </div>
                 <div class="form-floating mb-3">
-                    <input type="password" class="form-control" id="id_password" name="password" placeholder="Password"
+                    <input type="password" class="form-control" id="{{ login_form.password.id_for_label }}"
+                           name="{{ login_form.password.name }}" placeholder="Password"
                            required>
-                    <label for="id_password">Password</label>
-                    <div class="invalid-feedback">
-                        Please provide a password.
-                    </div>
+                    <label for="{{ login_form.password.id_for_label }}">Password</label>
+                    {% for error in field.errors %}
+                        <div class="invalid-feedback">
+                            {{ error }}
+                        </div>
+                    {% endfor %}
                 </div>
                 <button class="w-100 mb-3 btn btn-lg btn-primary gap-3" type="submit">Login</button>
                 <div class="checkbox mb-3">

@@ -4,30 +4,58 @@
 
 {% block content %}
     <div class="container p-5">
-        {% load widget_tweaks %}
         <form method="post" class="needs-validation" novalidate>
             {% csrf_token %}
-            {% for field in form %}
-                <div class="mb-3{% if field.errors %} has-error{% endif %}">
-                    {% if field.widget.input_type == 'checkbox' %}
-                        <div class="form-check mb-3">
-                            {% render_field field class+="form-check-input" %}
-                            <label for="{{ field.id_for_label }}" class="form-check-label">{{ field.label }}</label>
-                        </div>
-                    {% else %}
-                        <label for="{{ field.id_for_label }}" class="col-form-label">{{ field.label }}</label>
-                        {% render_field field class+="form-control" %}
-                    {% endif %}
-                    {% if form.is_bound %}
-                        {% for error in field.errors %}
-                            <div class="invalid-feedback valid-feedback">
-                                {{ error }}
-                            </div>
-                        {% endfor %}
-                    {% endif %}
-                </div>
-            {% endfor %}
-
+            <div class="mb-3">
+                <label for="{{ form.title.id_for_label }}" class="form-label">Title: </label>
+                <input name="{{ form.title.name }}" type="text" class="form-control" id="{{ form.title.id_for_label }}"
+                       required value="{{ object.title }}">
+                {% for error in field.errors %}
+                    <div class="invalid-feedback">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="mb-3">
+                <label for="{{ form.short_description.id_for_label }}" class="form-label">Short Description: </label>
+                <input name="{{ form.short_description.name }}" type="text" class="form-control"
+                       id="{{ form.short_description.id_for_label }}" required value="{{ object.short_description }}">
+                {% for error in field.errors %}
+                    <div class="invalid-feedback">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="mb-3">
+                <label for="{{ form.text.id_for_label }}" class="form-label">Text: </label>
+                <textarea name="{{ form.text.name }}" class="form-control" id="{{ form.text.id_for_label }}"
+                          required>{{ object.text }}</textarea>
+                {% for error in field.errors %}
+                    <div class="invalid-feedback">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="mb-3">
+                <label for="{{ form.image.id_for_label }}">Image:</label>
+                {% if object.image %}
+                    Currently: <a href="{{ object.image.url }}">{{ object.image.name }}</a>
+                    <input type="checkbox" name="image-clear" id="image-clear_id">
+                    <label for="image-clear_id">Clear</label><br>
+                {% endif %}
+                Change:
+                <input type="file" name="{{ form.image.name }}" accept="image/*" id="{{ form.image.id_for_label }}">
+                                {% for error in field.errors %}
+                    <div class="invalid-feedback">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="mb-3 form-check">
+                <input name="{{ form.is_draft.name }}" type="checkbox" class="form-check-input"
+                       id="{{ form.is_draft.id_for_label }}">
+                <label class="form-check-label" for="{{ form.is_draft.id_for_label }}">Is Draft: </label>
+            </div>
             <button type="submit" class="btn btn-primary">Save</button>
         </form>
     </div>
